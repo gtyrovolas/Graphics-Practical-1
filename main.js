@@ -1,4 +1,3 @@
-
 // Add any resources you want to load here
 // You will then be able to reference them in initialise_scene
 // e.g. as "resources.vert_shader"
@@ -15,7 +14,7 @@ RESOURCES = [
 
 */
 
-function initialise_scene(resources) {
+function initialise_scene() {
   // You can use your loaded resources here; resources.vert_shader will
   // be the content of the vert_shader file listed in RESOURCES, for
   // example
@@ -23,6 +22,7 @@ function initialise_scene(resources) {
   // Set up the key parts of your renderer: a camera, a scene and the renderer
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+  // fov, aspect ratio, nearest, furthest
 
   var renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize( window.innerWidth, window.innerHeight );
@@ -31,11 +31,48 @@ function initialise_scene(resources) {
 
   // Add things to your scene here
 
-  // [...]
+  //added cube
+  const geometry = new THREE.BoxGeometry(1,1,1);
+  const material = new THREE.MeshPhongMaterial({color: 0x888888});
+  const cube = new THREE.Mesh(geometry, material);
+  cube.position.z = -3
+  scene.add(cube);
+
+  const sphereGeom = new THREE.SphereGeometry(0.75,40,40);
+  const sphereMat = new THREE.MeshPhongMaterial({color: 0x449999});
+  const sphere = new THREE.Mesh(sphereGeom,sphereMat);
+  sphere.position.z = -3;
+  sphere.position.x = 2;
+  scene.add(sphere);
+
+
+
+
+  //light source
+      
+  const color = 0xFFFFFF;
+  const intensity = 1;
+  const light = new THREE.DirectionalLight(color, intensity);
+  light.position.set(-1, 2, 4);
+  scene.add(light);
+
+
 
   // Your animation loop, which will run repeatedly and renders a new frame each time
-  var animate = function () {
+  var animate = function (time) {
     requestAnimationFrame( animate );
+  	
+  	const canvas = renderer.domElement;
+  	camera.aspect = canvas.clientWidth / canvas.clientHeight;
+  	camera.updateProjectionMatrix();
+
+
+    time *= 0.001;
+    cube.rotation.x = time/4;
+    cube.rotation.y = time/4;
+  	cube.rotation.z = time/4;
+
+//  	sphere.rotation.x = time;
     renderer.render( scene, camera );
   };
 
