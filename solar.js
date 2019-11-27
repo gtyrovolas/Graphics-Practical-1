@@ -14,7 +14,7 @@ RESOURCES = [
 
 */
 
-function initialise_scene() {
+function initialise_scene(resources) {
   // You can use your loaded resources here; resources.vert_shader will
   // be the content of the vert_shader file listed in RESOURCES, for
   // example
@@ -80,7 +80,7 @@ function initialise_scene() {
   objects.push(earthOrbit);
 
 
-  const earthMaterial = new THREE.MeshPhongMaterial({color: 0x2233FF, emissive: 0x112244});
+  const earthMaterial = new THREE.ShaderMaterial({vertexShader: resources["vert_shader"], fragmentShader: resources["frag_shader"], uniforms: {color: {value: new THREE.Vector3(34.0/255,(3 * 16.0 + 3.0)/255,1) } } });
   const earthMesh = new THREE.Mesh(sphereGeometry, earthMaterial);
   earthOrbit.add(earthMesh);
   objects.push(earthMesh);
