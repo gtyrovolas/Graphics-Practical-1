@@ -8,8 +8,8 @@ RESOURCES = [
   ["frag_shader", "shaders/default.frag"]
 ]
 
-/* 
-    
+/*
+
     Create the scene
 
 */
@@ -25,7 +25,10 @@ function initialise_scene(resources) {
   camera.position.x = 20;
   camera.position.y = 40;
   camera.position.z = 20;
-  camera.lookAt(0,0,0); 
+  var cameraNorm = camera.position.x * camera.position.x  +   camera.position.y *   camera.position.y + camera.position.z * camera.position.z;
+//  cameraNorm = sqrt(cameraNorm);
+  camera.lookAt(0,0,0);
+
   // fov, aspect ratio, nearest, furthest
 
   var renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -48,15 +51,15 @@ function initialise_scene(resources) {
   scene.add(light);
 
 
-/*So God made the dome and separated the waters that were under the dome from the 
-  waters that were above the dome. And it was so. God called the dome Sky. 
+/*So God made the dome and separated the waters that were under the dome from the
+  waters that were above the dome. And it was so. God called the dome Sky.
   And there was evening and there was morning, the second day.*/
-  
+
   const solarSystem = new THREE.Object3D();
   scene.add(solarSystem);
   objects.push(solarSystem);
 
-  /*And God said, "Let there be lights in the dome of the sky to separate the day from the night; 
+  /*And God said, "Let there be lights in the dome of the sky to separate the day from the night;
   and let them be for signs and for seasons and for days and years, and let them be lights in the
    dome of the sky to give light upon the earth." And it was so.
   */
@@ -80,16 +83,22 @@ function initialise_scene(resources) {
   objects.push(earthOrbit);
 
 
-  const earthMaterial = new THREE.ShaderMaterial({vertexShader: resources["vert_shader"], fragmentShader: resources["frag_shader"], uniforms: {color: {value: new THREE.Vector3(34.0/255,(3 * 16.0 + 3.0)/255,1) } } });
+  const earthMaterial = new THREE.ShaderMaterial({vertexShader: resources["vert_shader"], fragmentShader: resources["frag_shader"], uniforms: {color: {value: new THREE.Vector3(34.0/255,(3 * 16.0 + 3.0)/255,1) },
+                                                                                                                                               camera_pos: {value: new THREE.Vector3(camera.position.x,
+                                                                                                                                                                                     camera.position.y,
+                                                                                                                                                                                     camera.position.z)}} });
   const earthMesh = new THREE.Mesh(sphereGeometry, earthMaterial);
   earthOrbit.add(earthMesh);
   objects.push(earthMesh);
 
   /*and the lesser light to rule the night*/
 
-  const moonMaterial = new THREE.MeshPhongMaterial({color: 0x888888, emissive: 0x222222});
+  const moonMaterial = new THREE.ShaderMaterial({vertexShader: resources["vert_shader"], fragmentShader: resources["frag_shader"], uniforms: {color: {value: new THREE.Vector3(150/255,150/255,150/255) },
+                                                                                                                                               camera_pos: {value: new THREE.Vector3(camera.position.x,
+                                                                                                                                                                                     camera.position.y,
+                                                                                                                                                                                     camera.position.z)}} });
   const moonMesh = new THREE.Mesh(sphereGeometry, moonMaterial);
-  moonMesh.scale.set(.5,.5,.5); 
+  moonMesh.scale.set(.5,.5,.5);
   moonMesh.position.x = 2;
   earthMesh.add(moonMesh);
   objects.push(moonMesh);
@@ -101,7 +110,7 @@ function initialise_scene(resources) {
   // Your animation loop, which will run repeatedly and renders a new frame each time
   var animate = function (time) {
     requestAnimationFrame( animate );
-  	
+
   	const canvas = renderer.domElement;
   	camera.aspect = canvas.clientWidth / canvas.clientHeight;
   	camera.updateProjectionMatrix();
@@ -114,16 +123,6 @@ function initialise_scene(resources) {
     });
 
 
-    gl.bufferData(
-      gl.ARRAY_BUFFER,
-      new Float32Array([
-             0, -100,
-           150,  125,
-          -175,  100]),
-      gl.STATIC_DRAW);
-
-
-
 
     renderer.render( scene, camera );
   };
@@ -134,9 +133,6 @@ function initialise_scene(resources) {
 }
 
 
-function setGeometry(gl) {
-  
-}
 
 
 
